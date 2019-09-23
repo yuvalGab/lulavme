@@ -1,35 +1,62 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'
 import {
   StyleSheet,
   View,
   Text,
-} from 'react-native';
-import RNShake from 'react-native-shake';
-
-let counter = 0
+  Button
+} from 'react-native'
+import RNShake from 'react-native-shake'
 
 const App = () => {
-  const [shakes, setShakes] = useState(counter);
-
+  const [points, setPoints] = useState(0)
+  let timeout = null
+  let tempo = 0
+  
   useEffect(() => {
-    RNShake.addEventListener('ShakeEvent', () => {
-      counter = counter + 1
-      setShakes(counter)
-    });
-
+    subscribe()
     return () => {
-      RNShake.removeEventListener('ShakeEvent');
+      unsubscribe()
+      reset()
     }
   }, [])
+  
+  function subscribe() {
+    RNShake.addEventListener('ShakeEvent', () => {
+      clearTimeout(timeout)
+      timeout = setTimeout(()=> {
+        tempo = 0
+      }, 6000)
+      
+      tempo = tempo + 1
+      const newPoints = points + tempo * 1
+      setPoints(newPoints)
+    })
+  }
+  
+  function unsubscribe() {
+    RNShake.removeEventListener('ShakeEvent')
+  }
+
+  function reset() {
+    setPoints(0)
+    tempo = 0
+    clearTimeout(timeout) 
+  }
 
   return (
     <View style={styles.wrapper}>
-      <Text style={styles.label}>Shakes:</Text>
-      <Text style={styles.text}>{shakes}</Text>
+      <Text style={styles.label}>Points:</Text>
+      <Text style={styles.points}>{points}</Text>
+      <View style={styles.resetButton}>
+        <Button
+          title="Reset"
+          onPress={reset}
+        />
+      </View>
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -38,11 +65,16 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   label: {
-    fontSize: 24
+    fontSize: 24,
+    marginBottom: 8
   },
-  text: {
-    fontSize: 18
+  points: {
+    fontSize: 40,
+    color: 'red'
+  },
+  resetButton: {
+    marginTop: 100
   }
-});
+})
 
-export default App;
+export default App
