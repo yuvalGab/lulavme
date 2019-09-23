@@ -3,13 +3,15 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "react-native start",
+    "start": "react-native start --reset-cache",
+    "android": "react-native run-android --variant=release",
     "test": "jest",
     "lint": "eslint ."
   },
   "dependencies": {
     "react": "16.8.6",
-    "react-native": "0.60.5"
+    "react-native": "0.60.5",
+    "react-native-shake": "^3.3.1"
   },
   "devDependencies": {
     "@babel/core": "^7.6.0",
