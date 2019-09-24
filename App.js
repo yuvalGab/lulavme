@@ -2,14 +2,20 @@ import React, { Component } from 'react'
 import { StyleSheet, View, Text, Button } from 'react-native'
 import RNShake from 'react-native-shake'
 
+const config = {
+  initialPoint: 0,
+  initialTempo: 1,
+  resetTimeout: 2000
+}
+
 class App extends Component {
   timeout = null
-  tempo = 1
+  tempo = config.initialTempo
 
   constructor(props) {
     super(props)
     this.state = {
-      points: 0
+      points: config.initialPoint
     }
   }
 
@@ -35,7 +41,7 @@ class App extends Component {
     clearTimeout(this.timeout)
     this.timeout = setTimeout(() => {
       this.tempo = 1
-    }, 3000)
+    }, config.resetTimeout)
   }
 
   unsubscribe() {
@@ -43,8 +49,8 @@ class App extends Component {
   }
 
   reset() {
-    this.setState({ points: 0 })
-    this.tempo = 1
+    this.setState({ points: config.initialPoint })
+    this.tempo = config.initialTempo
     clearTimeout(this.timeout)
   }
 
