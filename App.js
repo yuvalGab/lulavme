@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, Button } from 'react-native';
+import { StyleSheet, View, Text, Button, Image } from 'react-native';
 import RNShake from 'react-native-shake';
 import KeepAwake from 'react-native-keep-awake';
 
@@ -38,15 +38,15 @@ class App extends Component {
     });
   }
 
+  unsubscribe() {
+    RNShake.removeEventListener('ShakeEvent');
+  }
+
   resetTempoIfNoShaking() {
     clearTimeout(this.timeout);
     this.timeout = setTimeout(() => {
       this.tempo = config.initialTempo;
     }, config.resetTimeout);
-  }
-
-  unsubscribe() {
-    RNShake.removeEventListener('ShakeEvent');
   }
 
   reset() {
@@ -60,22 +60,35 @@ class App extends Component {
 
     return (
       <View style={styles.wrapper}>
-        <Text style={styles.label}>Points:</Text>
-        <Text style={styles.points}>{points}</Text>
-        <View style={styles.resetButton}>
+        <View style={{ ...styles.centerItems, ...styles.header }}>
+          <Text style={styles.label}>Points:</Text>
+          <Text style={styles.points}>{points}</Text>
+        </View>
+        <View style={{ ...styles.centerItems, ...styles.main }}>
+          <Image
+            style={styles.image}
+            source={require('./assets/images/lulav.jpg')}
+          />
+        </View>
+        <View style={{ ...styles.centerItems, ...styles.footer }}>
           <Button title="Reset" onPress={this.reset.bind(this)} />
         </View>
         <KeepAwake />
       </View>
-    )
+    );
   }
 }
 
 const styles = StyleSheet.create({
-  wrapper: {
-    flex: 1,
+  centerItems: {
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  wrapper: {
+    flex: 1,
+  },
+  header: {
+    flex: 2,
   },
   label: {
     fontSize: 24,
@@ -85,8 +98,16 @@ const styles = StyleSheet.create({
     fontSize: 40,
     color: 'red',
   },
-  resetButton: {
-    marginTop: 100,
+  main: {
+    flex: 10,
+  },
+  image: {
+    width: 200,
+    height: 800,
+    resizeMode: 'stretch',
+  },
+  footer: {
+    flex: 1,
   },
 });
 
