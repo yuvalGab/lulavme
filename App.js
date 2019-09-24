@@ -11,7 +11,7 @@ import RNShake from 'react-native-shake'
 const App = () => {
   const [points, setPoints] = useState(0)
   let timeout = null
-  let tempo = 0
+  let tempo = 1
   
   useEffect(() => {
     subscribe()
@@ -25,12 +25,13 @@ const App = () => {
     RNShake.addEventListener('ShakeEvent', () => {
       clearTimeout(timeout)
       timeout = setTimeout(()=> {
-        tempo = 0
-      }, 6000)
+        tempo = 1
+      }, 3000)
       
-      tempo = tempo + 1
       const newPoints = points + tempo * 1
       setPoints(newPoints)
+      initialPoints = newPoints
+      tempo = tempo + 1
     })
   }
   
@@ -40,7 +41,7 @@ const App = () => {
 
   function reset() {
     setPoints(0)
-    tempo = 0
+    tempo = 1
     clearTimeout(timeout) 
   }
 
