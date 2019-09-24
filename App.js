@@ -30,14 +30,14 @@ class App extends Component {
 
   subscribe() {
     RNShake.addEventListener('ShakeEvent', () => {
-      this.resetTempoIfNoShakeing()
+      this.resetTempoIfNoShaking()
       const { points } = this.state
       this.setState({ points: points + this.tempo * 1 })
       this.tempo = this.tempo + 1
     })
   }
 
-  resetTempoIfNoShakeing() {
+  resetTempoIfNoShaking() {
     clearTimeout(this.timeout)
     this.timeout = setTimeout(() => {
       this.tempo = 1
