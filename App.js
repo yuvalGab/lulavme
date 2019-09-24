@@ -14,7 +14,7 @@ const config = {
     diff: 1,
     range: 100,
     deg: 1,
-    duration: 200,
+    duration: 150,
   },
   resetTimeout: 2000,
 };
@@ -23,7 +23,8 @@ class App extends Component {
   timeout = null;
   tempo = config.initial.tempo;
   animatedValue = new Animated.Value(0);
-  shakesStack = [];
+  pointsTimeouts = [];
+  shakesTimeouts = [];
 
   constructor(props) {
     super(props);
@@ -44,8 +45,7 @@ class App extends Component {
   subscribe() {
     RNShake.addEventListener('ShakeEvent', () => {
       this.resetTempoIfNoShaking();
-      const { points } = this.state;
-      this.setState({ points: points + this.tempo * 1 });
+      this.delayedPointIncrement(this.tempo);
       this.tempo = this.tempo + 1;
       this.shakeAnimation();
     });
@@ -78,14 +78,27 @@ class App extends Component {
     this.delayedAnimation(animation, duration);
   }
 
+  delayedPointIncrement(newPoints) {
+    const { duration } = config.shake;
+    for (let i = 0; i < newPoints; i++) {
+      const delayTimeout = setTimeout(() => {
+        this.setState(state => ({ points: ++state.points }));
+      }, ((duration * this.shakesTimeouts.length) / newPoints) * i);
+
+      this.pointsTimeouts.push(delayTimeout);
+    }
+  }
+
   delayedAnimation(animation, duration) {
     const delayTimeout = setTimeout(() => {
       animation.start(() => {
-        this.shakesStack = this.shakesStack.filter(to => to !== delayTimeout);
+        this.shakesTimeouts = this.shakesTimeouts.filter(
+          to => to !== delayTimeout,
+        );
       });
-    }, duration * this.shakesStack.length);
+    }, duration * this.shakesTimeouts.length);
 
-    this.shakesStack.push(delayTimeout);
+    this.shakesTimeouts.push(delayTimeout);
   }
 
   resetTempoIfNoShaking() {
@@ -100,7 +113,9 @@ class App extends Component {
     this.setState({ points });
     this.tempo = tempo;
     clearTimeout(this.timeout);
-    this.shakesStack.forEach(to => clearTimeout(to));
+    [...this.pointsTimeouts, this.shakesTimeouts].forEach(to => {
+      clearTimeout(to);
+    });
   }
 
   render() {
