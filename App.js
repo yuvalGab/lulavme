@@ -3,23 +3,32 @@ import { StyleSheet, View, Text, Button, Animated, Easing } from 'react-native';
 import RNShake from 'react-native-shake';
 import KeepAwake from 'react-native-keep-awake';
 
-const lulavImage = require('./assets/images/lulav.jpg')
+const lulavImage = require('./assets/images/lulav.jpg');
 
 const config = {
-  initialPoint: 0,
-  initialTempo: 1,
+  initial: {
+    points: 0,
+    tempo: 1,
+  },
+  shake: {
+    diff: 1,
+    range: 100,
+    deg: 1,
+    duration: 200,
+  },
   resetTimeout: 2000,
 };
 
 class App extends Component {
   timeout = null;
-  tempo = config.initialTempo;
+  tempo = config.initial.tempo;
   animatedValue = new Animated.Value(0);
+  shakesStack = [];
 
   constructor(props) {
     super(props);
     this.state = {
-      points: config.initialPoint,
+      points: config.initial.points,
     };
   }
 
@@ -46,47 +55,57 @@ class App extends Component {
     RNShake.removeEventListener('ShakeEvent');
   }
 
-  resetTempoIfNoShaking() {
-    clearTimeout(this.timeout);
-    this.timeout = setTimeout(() => {
-      this.tempo = config.initialTempo;
-    }, config.resetTimeout);
-  }
-
   shakeAnimation() {
-    const toValue = 0.05 * this.tempo;
-    const duration = 500 / this.tempo;
+    const { diff, duration } = config.shake;
+    const toValue = diff * this.tempo;
     const commonOptions = {
-      duration,
+      toValue,
+      duration: duration * 0.25,
       easing: Easing.linear,
       useNativeDriver: true,
     };
 
-    Animated.sequence([
-      Animated.timing(this.animatedValue, {
-        ...commonOptions,
-        toValue,
-      }),
+    const animation = Animated.sequence([
+      Animated.timing(this.animatedValue, { ...commonOptions }),
       Animated.timing(this.animatedValue, {
         ...commonOptions,
         toValue: -toValue,
+        duration: duration * 0.5,
       }),
-      Animated.timing(this.animatedValue, {
-        ...commonOptions,
-        toValue: 0.0,
-      }),
-    ]).start();
+      Animated.timing(this.animatedValue, { ...commonOptions, toValue: 0.0 }),
+    ]);
+
+    this.delayedAnimation(animation, duration);
+  }
+
+  delayedAnimation(animation, duration) {
+    const delayTimeout = setTimeout(() => {
+      animation.start(() => {
+        this.shakesStack = this.shakesStack.filter(to => to !== delayTimeout);
+      });
+    }, duration * this.shakesStack.length);
+
+    this.shakesStack.push(delayTimeout);
+  }
+
+  resetTempoIfNoShaking() {
+    clearTimeout(this.timeout);
+    this.timeout = setTimeout(() => {
+      this.tempo = config.initial.tempo;
+    }, config.resetTimeout);
   }
 
   reset() {
-    this.setState({ points: config.initialPoint });
-    this.tempo = config.initialTempo;
+    const { points, tempo } = config.initial;
+    this.setState({ points });
+    this.tempo = tempo;
     clearTimeout(this.timeout);
+    this.shakesStack.forEach(to => clearTimeout(to));
   }
 
   render() {
     const { points } = this.state;
-
+    const { range, deg } = config.shake;
     return (
       <View style={styles.wrapper}>
         <View style={{ ...styles.centerItems, ...styles.header }}>
@@ -101,8 +120,8 @@ class App extends Component {
               transform: [
                 {
                   rotate: this.animatedValue.interpolate({
-                    inputRange: [-5, 5],
-                    outputRange: ['-0.5rad', '0.5rad'],
+                    inputRange: [-range, range],
+                    outputRange: [`-${deg}rad`, `${deg}rad`],
                   }),
                 },
               ],
