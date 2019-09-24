@@ -1,62 +1,66 @@
-
-import React, { useState, useEffect } from 'react'
-import {
-  StyleSheet,
-  View,
-  Text,
-  Button
-} from 'react-native'
+import React, { Component } from 'react'
+import { StyleSheet, View, Text, Button } from 'react-native'
 import RNShake from 'react-native-shake'
 
-const App = () => {
-  const [points, setPoints] = useState(0)
-  let timeout = null
-  let tempo = 1
-  
-  useEffect(() => {
-    subscribe()
-    return () => {
-      unsubscribe()
-      reset()
+class App extends Component {
+  timeout = null
+  tempo = 1
+
+  constructor(props) {
+    super(props)
+    this.state = {
+      points: 0
     }
-  }, [])
-  
-  function subscribe() {
+  }
+
+  componentDidMount() {
+    this.subscribe()
+  }
+
+  componentWillUnmount() {
+    this.unsubscribe()
+    this.reset()
+  }
+
+  subscribe() {
     RNShake.addEventListener('ShakeEvent', () => {
-      clearTimeout(timeout)
-      timeout = setTimeout(()=> {
-        tempo = 1
-      }, 3000)
-      
-      const newPoints = points + tempo * 1
-      setPoints(newPoints)
-      initialPoints = newPoints
-      tempo = tempo + 1
+      this.resetTempoIfNoShakeing()
+      const { points } = this.state
+      this.setState({ points: points + this.tempo * 1 })
+      this.tempo = this.tempo + 1
     })
   }
-  
-  function unsubscribe() {
+
+  resetTempoIfNoShakeing() {
+    clearTimeout(this.timeout)
+    this.timeout = setTimeout(() => {
+      this.tempo = 1
+    }, 3000)
+  }
+
+  unsubscribe() {
     RNShake.removeEventListener('ShakeEvent')
   }
 
-  function reset() {
-    setPoints(0)
-    tempo = 1
-    clearTimeout(timeout) 
+  reset() {
+    this.setState({ points: 0 })
+    this.tempo = 1
+    clearTimeout(this.timeout)
   }
 
-  return (
-    <View style={styles.wrapper}>
-      <Text style={styles.label}>Points:</Text>
-      <Text style={styles.points}>{points}</Text>
-      <View style={styles.resetButton}>
-        <Button
-          title="Reset"
-          onPress={reset}
-        />
+  render() {
+    const { points } = this.state
+
+    return (
+      <View style={styles.wrapper}>
+        <Text style={styles.label}>Points:</Text>
+        <Text style={styles.points}>{points}</Text>
+        <View style={styles.resetButton}>
+          <Button title="Reset" onPress={this.reset.bind(this)} />
+        </View>
       </View>
-    </View>
-  )
+    )
+  }
 }
 
 const styles = StyleSheet.create({
