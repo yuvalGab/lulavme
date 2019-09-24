@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, Button, Image } from 'react-native';
+import { StyleSheet, View, Text, Button, Animated, Easing } from 'react-native';
 import RNShake from 'react-native-shake';
 import KeepAwake from 'react-native-keep-awake';
+
+const lulavImage = require('./assets/images/lulav.jpg')
 
 const config = {
   initialPoint: 0,
@@ -12,6 +14,7 @@ const config = {
 class App extends Component {
   timeout = null;
   tempo = config.initialTempo;
+  animatedValue = new Animated.Value(0);
 
   constructor(props) {
     super(props);
@@ -35,6 +38,7 @@ class App extends Component {
       const { points } = this.state;
       this.setState({ points: points + this.tempo * 1 });
       this.tempo = this.tempo + 1;
+      this.shakeAnimation();
     });
   }
 
@@ -47,6 +51,31 @@ class App extends Component {
     this.timeout = setTimeout(() => {
       this.tempo = config.initialTempo;
     }, config.resetTimeout);
+  }
+
+  shakeAnimation() {
+    const toValue = 0.05 * this.tempo;
+    const duration = 500 / this.tempo;
+    const commonOptions = {
+      duration,
+      easing: Easing.linear,
+      useNativeDriver: true,
+    };
+
+    Animated.sequence([
+      Animated.timing(this.animatedValue, {
+        ...commonOptions,
+        toValue,
+      }),
+      Animated.timing(this.animatedValue, {
+        ...commonOptions,
+        toValue: -toValue,
+      }),
+      Animated.timing(this.animatedValue, {
+        ...commonOptions,
+        toValue: 0.0,
+      }),
+    ]).start();
   }
 
   reset() {
@@ -65,9 +94,19 @@ class App extends Component {
           <Text style={styles.points}>{points}</Text>
         </View>
         <View style={{ ...styles.centerItems, ...styles.main }}>
-          <Image
-            style={styles.image}
-            source={require('./assets/images/lulav.jpg')}
+          <Animated.Image
+            source={lulavImage}
+            style={{
+              ...styles.lulavImage,
+              transform: [
+                {
+                  rotate: this.animatedValue.interpolate({
+                    inputRange: [-5, 5],
+                    outputRange: ['-0.5rad', '0.5rad'],
+                  }),
+                },
+              ],
+            }}
           />
         </View>
         <View style={{ ...styles.centerItems, ...styles.footer }}>
@@ -86,6 +125,7 @@ const styles = StyleSheet.create({
   },
   wrapper: {
     flex: 1,
+    backgroundColor: 'white',
   },
   header: {
     flex: 2,
@@ -101,9 +141,9 @@ const styles = StyleSheet.create({
   main: {
     flex: 10,
   },
-  image: {
+  lulavImage: {
     width: 200,
-    height: 800,
+    height: 500,
     resizeMode: 'stretch',
   },
   footer: {
