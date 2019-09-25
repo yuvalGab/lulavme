@@ -1,5 +1,6 @@
-import React, { memo, Fragment, PropTypes } from 'react';
-import { StyleSheet, Button } from 'react-native';
+import React, { memo, Fragment } from 'react';
+import PropTypes from 'prop-types';
+import { Button } from 'react-native';
 
 const Footer = memo(({ reset }) => (
   <Fragment>
@@ -10,7 +11,5 @@ const Footer = memo(({ reset }) => (
 Footer.propTypes = {
   reset: PropTypes.func.isRequired,
 };
-
-const styles = StyleSheet.create({});
 
 export default Footer;

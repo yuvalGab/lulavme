@@ -1,4 +1,5 @@
-import React, { memo, Fragment, PropTypes } from 'react';
+import React, { memo, Fragment } from 'react';
+import PropTypes from 'prop-types';
 import { StyleSheet, Text } from 'react-native';
 
 const Header = memo(({ points }) => (
@@ -9,7 +10,7 @@ const Header = memo(({ points }) => (
 ));
 
 Header.propTypes = {
-  points: PropTypes.element.isRequired,
+  points: PropTypes.number.isRequired,
 };
 
 const styles = StyleSheet.create({

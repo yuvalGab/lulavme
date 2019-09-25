@@ -3,7 +3,7 @@ import { StyleSheet, Animated } from 'react-native';
 import { MainContext } from '../../../App';
 import config from '../../../app.config.json';
 
-const image = require('./assets/images/lulav.jpg');
+const image = require('../../../assets/images/lulav.jpg');
 
 const Lulav = () => (
   <MainContext.Consumer>

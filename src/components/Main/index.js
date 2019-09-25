@@ -1,4 +1,4 @@
-import React, { StyleSheet, Fragment } from 'react';
+import React, { Fragment } from 'react';
 import Lulav from './Lulav';
 
 const Main = () => (
@@ -6,7 +6,5 @@ const Main = () => (
     <Lulav />
   </Fragment>
 );
-
-const styles = StyleSheet.create({});
 
 export default Main;
