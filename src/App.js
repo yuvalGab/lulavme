@@ -1,11 +1,14 @@
-import React, { Component } from 'react';
-import { StyleSheet, View, Text, Button, Animated, Easing } from 'react-native';
+import React, { createContext, Component } from 'react';
+import { StyleSheet, View, Button, Animated, Easing } from 'react-native';
+import config from './app.config.json';
 import RNShake from 'react-native-shake';
 import KeepAwake from 'react-native-keep-awake';
-import config from './app.config.json';
 import Header from './components/Header';
+import Main from './components/Main';
 
-const lulavImage = require('./assets/images/lulav.jpg');
+export const MainContext = createContext({
+  animatedValue: null,
+});
 
 class App extends Component {
   timeout = null;
@@ -108,27 +111,15 @@ class App extends Component {
 
   render() {
     const { points } = this.state;
-    const { range, deg } = config.shake;
     return (
       <View style={styles.wrapper}>
         <View style={{ ...styles.centerItems, ...styles.header }}>
           <Header points={points} />
         </View>
         <View style={{ ...styles.centerItems, ...styles.main }}>
-          <Animated.Image
-            source={lulavImage}
-            style={{
-              ...styles.lulavImage,
-              transform: [
-                {
-                  rotate: this.animatedValue.interpolate({
-                    inputRange: [-range, range],
-                    outputRange: [`-${deg}rad`, `${deg}rad`],
-                  }),
-                },
-              ],
-            }}
-          />
+          <MainContext.Provider value={{ animatedValue: this.animatedValue }}>
+            <Main />
+          </MainContext.Provider>
         </View>
         <View style={{ ...styles.centerItems, ...styles.footer }}>
           <Button title="Reset" onPress={this.reset.bind(this)} />
@@ -153,11 +144,6 @@ const styles = StyleSheet.create({
   },
   main: {
     flex: 10,
-  },
-  lulavImage: {
-    width: 200,
-    height: 500,
-    resizeMode: 'stretch',
   },
   footer: {
     flex: 1,
