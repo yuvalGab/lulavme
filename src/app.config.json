@@ -1,0 +1,13 @@
+{
+  "initial": {
+    "points": 0,
+    "tempo": 1
+  },
+  "shake": {
+    "diff": 1,
+    "range": 100,
+    "deg": 1,
+    "duration": 150
+  },
+  "resetTimeout": 2000
+}

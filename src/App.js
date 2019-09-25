@@ -2,22 +2,9 @@ import React, { Component } from 'react';
 import { StyleSheet, View, Text, Button, Animated, Easing } from 'react-native';
 import RNShake from 'react-native-shake';
 import KeepAwake from 'react-native-keep-awake';
+import config from './app.config.json';
 
 const lulavImage = require('./assets/images/lulav.jpg');
-
-const config = {
-  initial: {
-    points: 0,
-    tempo: 1,
-  },
-  shake: {
-    diff: 1,
-    range: 100,
-    deg: 1,
-    duration: 150,
-  },
-  resetTimeout: 2000,
-};
 
 class App extends Component {
   timeout = null;
