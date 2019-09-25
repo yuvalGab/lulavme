@@ -3,6 +3,7 @@ import { StyleSheet, View, Text, Button, Animated, Easing } from 'react-native';
 import RNShake from 'react-native-shake';
 import KeepAwake from 'react-native-keep-awake';
 import config from './app.config.json';
+import Header from './components/Header';
 
 const lulavImage = require('./assets/images/lulav.jpg');
 
@@ -111,8 +112,7 @@ class App extends Component {
     return (
       <View style={styles.wrapper}>
         <View style={{ ...styles.centerItems, ...styles.header }}>
-          <Text style={styles.label}>Points:</Text>
-          <Text style={styles.points}>{points}</Text>
+          <Header points={points} />
         </View>
         <View style={{ ...styles.centerItems, ...styles.main }}>
           <Animated.Image
@@ -150,14 +150,6 @@ const styles = StyleSheet.create({
   },
   header: {
     flex: 2,
-  },
-  label: {
-    fontSize: 24,
-    marginBottom: 8,
-  },
-  points: {
-    fontSize: 40,
-    color: 'red',
   },
   main: {
     flex: 10,
