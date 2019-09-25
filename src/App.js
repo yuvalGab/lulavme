@@ -1,10 +1,11 @@
 import React, { createContext, Component } from 'react';
-import { StyleSheet, View, Button, Animated, Easing } from 'react-native';
+import { StyleSheet, View, Animated, Easing } from 'react-native';
 import config from './app.config.json';
 import RNShake from 'react-native-shake';
 import KeepAwake from 'react-native-keep-awake';
 import Header from './components/Header';
 import Main from './components/Main';
+import Footer from './components/Footer';
 
 export const MainContext = createContext({
   animatedValue: null,
@@ -122,7 +123,7 @@ class App extends Component {
           </MainContext.Provider>
         </View>
         <View style={{ ...styles.centerItems, ...styles.footer }}>
-          <Button title="Reset" onPress={this.reset.bind(this)} />
+          <Footer reset={this.reset.bind(this)} />
         </View>
         <KeepAwake />
       </View>
