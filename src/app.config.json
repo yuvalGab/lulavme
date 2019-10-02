@@ -5,9 +5,9 @@
   },
   "shake": {
     "diff": 1,
-    "range": 100,
+    "range": 200,
     "deg": 1,
-    "duration": 150
+    "duration": 100
   },
   "resetTimeout": 2000
 }
